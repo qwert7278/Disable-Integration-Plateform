@@ -1,0 +1,7 @@
+{
+  "name": "身心障礙全流程整合導航平台",
+  "description": "台灣首創身心障礙與失能資源整合 SaaS 平台，提供從醫療轉銜到社會回歸的一站式決策導航與能力優化建議。",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
