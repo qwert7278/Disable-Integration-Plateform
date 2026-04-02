@@ -8,17 +8,27 @@ import { StatsDashboard } from './components/StatsDashboard';
 import { AdminLogin } from './components/AdminLogin';
 import { IntakeData, AnalysisReport } from './types';
 import { analyzeIntake } from './services/engine';
-import { Shield, Users, Zap, Heart, BarChart3 } from 'lucide-react';
+import { Shield, Users, Zap, Heart, BarChart3, ChevronRight, Sparkles, Clock3, Menu, X } from 'lucide-react';
 
 export default function App() {
   const [view, setView] = useState<'landing' | 'intake' | 'report' | 'stats'>('landing');
   const [report, setReport] = useState<AnalysisReport | null>(null);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [adminToken, setAdminToken] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const startEvaluation = () => {
     setStartTime(Date.now());
     setView('intake');
+    setMobileMenuOpen(false);
+  };
+
+  const scrollToSection = (sectionId: 'core-philosophy' | 'resource-map') => {
+    setView('landing');
+    setMobileMenuOpen(false);
+    setTimeout(() => {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   const handleComplete = async (data: IntakeData) => {
@@ -55,23 +65,13 @@ export default function App() {
             </div>
             <div className="hidden md:flex items-center gap-8 text-sm font-bold text-slate-500">
               <button 
-                onClick={() => {
-                  setView('landing');
-                  setTimeout(() => {
-                    document.getElementById('core-philosophy')?.scrollIntoView({ behavior: 'smooth' });
-                  }, 100);
-                }}
+                onClick={() => scrollToSection('core-philosophy')}
                 className="hover:text-brand-600 transition-colors"
               >
                 核心理念
               </button>
               <button 
-                onClick={() => {
-                  setView('landing');
-                  setTimeout(() => {
-                    document.getElementById('resource-map')?.scrollIntoView({ behavior: 'smooth' });
-                  }, 100);
-                }}
+                onClick={() => scrollToSection('resource-map')}
                 className="hover:text-brand-600 transition-colors"
               >
                 資源地圖
@@ -91,7 +91,22 @@ export default function App() {
                 立即開始
               </button>
             </div>
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="md:hidden p-2 rounded-lg text-slate-600 hover:text-brand-700 hover:bg-brand-50 transition-colors"
+              aria-label="切換選單"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
+          {mobileMenuOpen && (
+            <div className="md:hidden py-4 border-t border-brand-100 space-y-2 text-sm font-bold">
+              <button onClick={() => scrollToSection('core-philosophy')} className="w-full text-left px-2 py-2 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-700">核心理念</button>
+              <button onClick={() => scrollToSection('resource-map')} className="w-full text-left px-2 py-2 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-700">資源地圖</button>
+              <button onClick={() => { setView('stats'); setMobileMenuOpen(false); }} className="w-full text-left px-2 py-2 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-700">系統統計</button>
+              <button onClick={startEvaluation} className="w-full mt-2 px-4 py-3 bg-brand-600 text-white rounded-xl text-center">立即開始</button>
+            </div>
+          )}
         </div>
       </nav>
 
@@ -112,8 +127,9 @@ export default function App() {
                 <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="inline-block px-4 py-1.5 bg-brand-100 text-brand-700 rounded-full text-sm font-bold tracking-wide uppercase border border-brand-200"
+                  className="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-100 text-brand-700 rounded-full text-sm font-bold tracking-wide uppercase border border-brand-200"
                 >
+                  <Sparkles className="w-4 h-4" />
                   2025 基隆市身障平台支持整合計畫
                 </motion.div>
                 
@@ -135,18 +151,30 @@ export default function App() {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                   <button
                     onClick={startEvaluation}
-                    className="w-full sm:w-auto px-10 py-4 bg-brand-600 text-white rounded-2xl font-bold text-lg hover:bg-brand-700 transition-all shadow-xl shadow-brand-600/30 active:scale-95 flex items-center gap-2"
+                    className="w-full sm:w-auto px-10 py-4 bg-brand-600 text-white rounded-2xl font-bold text-lg hover:bg-brand-700 transition-all shadow-xl shadow-brand-600/30 active:scale-95 flex items-center justify-center gap-2"
                   >
                     開始個人化評估 <Zap className="w-5 h-5 fill-white" />
                   </button>
                   <button 
-                    onClick={() => {
-                      document.getElementById('core-philosophy')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
+                    onClick={() => scrollToSection('core-philosophy')}
                     className="w-full sm:w-auto px-10 py-4 bg-white text-brand-700 border border-brand-200 rounded-2xl font-bold text-lg hover:bg-brand-50 transition-all"
                   >
                     了解核心理念
                   </button>
+                </div>
+
+                <div className="grid sm:grid-cols-3 gap-4 text-left pt-3">
+                  {[
+                    { title: '3 分鐘完成', desc: '問卷精簡，快速得到建議', icon: Clock3 },
+                    { title: '跨域整合', desc: '醫療・長照・就業一次串接', icon: Users },
+                    { title: '行動清單', desc: '明確下一步，避免資源迷航', icon: ChevronRight }
+                  ].map((item, idx) => (
+                    <div key={idx} className="hero-metric-card">
+                      <item.icon className="w-5 h-5 text-brand-600 mb-2" />
+                      <h3 className="font-black text-slate-800">{item.title}</h3>
+                      <p className="text-slate-500 text-sm mt-1">{item.desc}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
 
