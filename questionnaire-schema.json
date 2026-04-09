@@ -1,0 +1,320 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "身心障礙全流程整合導航平台 - 前端問卷 JSON Schema",
+  "description": "此 Schema 定義了 9 個步驟的評估問卷結構、白話文題目、選項、計分邏輯與條件跳轉規則。",
+  "type": "object",
+  "definitions": {
+    "standardScale": {
+      "x-scale": {
+        "0": "完全無法，需要完全依賴他人",
+        "1": "幾乎無法",
+        "2": "需要大量協助",
+        "3": "可以做，但會卡或需要一點幫忙",
+        "4": "大致可自行完成",
+        "5": "完全可以自己完成"
+      }
+    }
+  },
+  "properties": {
+    "respondentType": {
+      "title": "1. 您目前填寫的身份是？",
+      "type": "string",
+      "enum": ["self", "family", "other"],
+      "x-labels": {
+        "self": "本人",
+        "family": "家屬",
+        "other": "其他協助者"
+      }
+    },
+    "currentStage": {
+      "title": "2. 目前大概在哪個階段？",
+      "type": "string",
+      "enum": ["hospitalized", "just-discharged", "home-awhile", "stable", "planning-work"],
+      "x-labels": {
+        "hospitalized": "還在住院中",
+        "just-discharged": "剛出院回到家",
+        "home-awhile": "已經在家一段時間",
+        "stable": "生活大致穩定",
+        "planning-work": "想開始規劃工作/重返社會"
+      }
+    },
+    "primaryConcern": {
+      "title": "3. 您現在最想先解決什麼？",
+      "type": "string",
+      "enum": ["care", "daily-life", "cognition", "work-economy", "family-pressure", "social-emotional", "housing-transport", "unknown"],
+      "x-labels": {
+        "care": "我不知道回家後要怎麼照顧",
+        "daily-life": "我現在很多日常事情做不了",
+        "cognition": "我在溝通或理解上有困難",
+        "work-economy": "我在想未來能不能工作或賺錢",
+        "family-pressure": "家裡照顧壓力很大",
+        "social-emotional": "我最近情緒或生活很悶",
+        "housing-transport": "我出門或家裡環境不方便",
+        "unknown": "我真的不知道從哪開始"
+      }
+    },
+    "age": {
+      "title": "年齡",
+      "type": "string",
+      "pattern": "^[0-9]*$"
+    },
+    "city": {
+      "title": "居住縣市",
+      "type": "string"
+    },
+    "education": {
+      "title": "教育程度",
+      "type": "string",
+      "enum": ["none", "primary", "junior-high", "senior-high", "university", "graduate"],
+      "x-labels": {
+        "none": "不識字",
+        "primary": "國小",
+        "junior-high": "國中",
+        "senior-high": "高中/職",
+        "university": "大學/專科",
+        "graduate": "研究所及以上"
+      }
+    },
+    "source": {
+      "title": "失能/障礙來源",
+      "type": "string",
+      "enum": ["congenital", "disease", "accident", "occupational", "aging"],
+      "x-labels": {
+        "congenital": "先天",
+        "disease": "後天疾病",
+        "accident": "意外",
+        "occupational": "職災",
+        "aging": "老化"
+      }
+    },
+    "hasCertificate": {
+      "title": "身障證明狀態",
+      "type": "string",
+      "enum": ["none", "unsure", "failed", "yes"],
+      "x-labels": {
+        "none": "無",
+        "unsure": "知道但未辦",
+        "failed": "申請過未通過",
+        "yes": "已持證"
+      }
+    },
+    "certificateDetails": {
+      "type": "object",
+      "properties": {
+        "degree": {
+          "title": "身障等級",
+          "type": "string",
+          "enum": ["mild", "moderate", "severe", "profound"],
+          "x-labels": {
+            "mild": "輕度",
+            "moderate": "中度",
+            "severe": "重度",
+            "profound": "極重度"
+          }
+        },
+        "number": { "title": "證明編號", "type": "string" },
+        "category": { "title": "障礙類別 (ICF)", "type": "string" }
+      },
+      "dependencies": {
+        "hasCertificate": ["yes"]
+      }
+    },
+    "travelCardStatus": {
+      "title": "愛心悠遊卡/博愛卡狀態",
+      "type": "string",
+      "enum": ["none", "applying", "yes"],
+      "x-labels": {
+        "none": "未辦理",
+        "applying": "辦理中",
+        "yes": "已領取"
+      }
+    },
+    "physical": {
+      "title": "2. 身體狀況評估",
+      "type": "object",
+      "x-scoring": "0-5 (分數越高越好)",
+      "properties": {
+        "indoorMobility": { "title": "在家裡的移動情形", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "outdoorMobility": { "title": "外出的移動情形", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "transfer": { "title": "從床到椅子/馬桶的移位", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "balance": { "title": "平衡穩定度 (是否容易跌倒)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "endurance": { "title": "耐力 (走或站的持久度)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "chronicControl": { "title": "如果沒有人幫忙，你能不能知道或管理自己的血壓、血糖等狀況？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "pain": { "title": "疼痛控制穩定度 (0:極痛, 5:無痛)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "rehabStatus": { "title": "復健或運動的規律性", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" }
+      }
+    },
+    "selfCare": {
+      "title": "3. 日常生活自理能力",
+      "type": "object",
+      "x-scoring": "0-5 (分數越高越好)",
+      "properties": {
+        "eating": { "title": "自行進食", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "bathing": { "title": "自行洗澡", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "toileting": { "title": "自行上廁所", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "dressing": { "title": "自行穿脫衣服", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "medication": { "title": "按時吃藥與藥物管理", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "housework": { "title": "處理家事或準備餐點", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "errands": { "title": "出門處理日常事務 (如：買東西、繳費)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" }
+      }
+    },
+    "cognition": {
+      "title": "4. 認知、溝通與數位能力",
+      "type": "object",
+      "x-scoring": "0-5 (分數越高越好)",
+      "properties": {
+        "memory": { "title": "能否記得最近發生的事", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "orientation": { "title": "能否清楚今天日期與自己在哪裡", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "judgment": { "title": "日常生活遇到事情時，你能不能自己判斷怎麼做？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "mood": { "title": "情緒與行為是否穩定", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "expression": { "title": "清楚表達自己的需求", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "comprehension": { "title": "理解他人說明的內容", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "mobileUse": { "title": "手機使用能力 (如：聯絡、查資料)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "computerUse": { "title": "電腦或平板使用能力", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "learningAbility": { "title": "學習新事物或新軟體的意願", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "aiUsage": { 
+          "title": "未來是否願意嘗試用語音助理或AI工具幫助生活？", 
+          "type": "integer", 
+          "minimum": 0, 
+          "maximum": 5,
+          "x-description": "建議僅在具備基本數位能力或高中以上學歷時顯示",
+          "x-scale": {
+            "0": "完全不願意",
+            "5": "非常願意嘗試"
+          }
+        }
+      }
+    },
+    "considerWork": {
+      "title": "您目前是否考慮重新工作或參與社會活動？",
+      "type": "string",
+      "enum": ["yes", "maybe", "no", "later"],
+      "x-labels": {
+        "yes": "有，想規劃",
+        "maybe": "可能會",
+        "no": "暫時沒有",
+        "later": "目前無法考慮"
+      }
+    },
+    "economy": {
+      "title": "5. 工作與經濟能力",
+      "type": "object",
+      "x-scoring": "0-5 (分數越高越好)",
+      "properties": {
+        "skills": { "title": "目前的技能等級與經驗", "type": "integer", "minimum": 0, "maximum": 5, "x-skip-if": "considerWork in ['no', 'later']" },
+        "intent": { "title": "重返工作的意願", "type": "integer", "minimum": 0, "maximum": 5, "x-skip-if": "considerWork in ['no', 'later']" },
+        "capacity": { "title": "目前的體力與工作負荷能力", "type": "integer", "minimum": 0, "maximum": 5, "x-skip-if": "considerWork in ['no', 'later']" },
+        "remoteFeasibility": { "title": "在家或遠距工作的可行性", "type": "integer", "minimum": 0, "maximum": 5, "x-skip-if": "considerWork in ['no', 'later']" },
+        "supportNeeds": { "title": "工作中需要的協助程度 (0:極高需求, 5:不需協助)", "type": "integer", "minimum": 0, "maximum": 5, "x-skip-if": "considerWork in ['no', 'later']" },
+        "economicRole": { "title": "目前生活費主要是靠自己還是他人？", "type": "integer", "minimum": 0, "maximum": 5, "x-scale": {"0": "完全依賴他人", "3": "一半一半", "5": "完全自己負擔"} },
+        "economicPressure": { "title": "經濟可承受度 (0:極大壓力, 5:無壓力)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "welfareStatus": { "title": "目前是否有領取政府補助（如低收、中低收或其他補助）？", "type": "integer", "minimum": 0, "maximum": 5, "x-scale": {"0": "無", "5": "有"} }
+      }
+    },
+    "family": {
+      "title": "6. 家庭支持情況",
+      "type": "object",
+      "x-scoring": "0-5 (分數越高越好)",
+      "properties": {
+        "cohabitants": { "title": "家裡有人願意持續幫忙照顧您嗎？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "caregiverHealth": { "title": "主要照顧者的身體健康狀況", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "careHours": { "title": "平均每天大約有人能陪伴/照顧幾小時？", "type": "integer", "minimum": 0, "maximum": 5, "x-scale": { "0": "0-1小時", "5": "24小時全天候" } },
+        "familyAttitude": { "title": "家人是否支持尋求外部幫助（例如申請服務或找專業協助）？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "resourceKnowledge": { "title": "家人是否知道去哪裡找相關資源？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "familyConflict": { "title": "家庭互動穩定度 (0:嚴重衝突, 5:和諧穩定)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "emergencyBackup": { "title": "若主要照顧者突然不能幫忙，是否有其他人可支援？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" }
+      }
+    },
+    "social": {
+      "title": "7. 心情與社交生活",
+      "type": "object",
+      "x-scoring": "0-5 (分數越高越好)",
+      "properties": {
+        "socialSupport": { "title": "平常是否常與朋友、家人或他人互動？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "communityParticipation": { "title": "最近是否有參與外出活動、興趣或社區事務？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "isolation": { "title": "你平常會不會很少和人說話或互動？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "lifeGoals": { "title": "覺得人生目前是否有明確目標或想做的事？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "selfEfficacy": { "title": "覺得自己是否有能力讓生活變好 (自我效能)？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "sleep": { "title": "最近的睡眠品質狀況", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "emotionalDistress": { "title": "情緒穩定程度 (0:極度困擾, 5:平穩放鬆)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" }
+      }
+    },
+    "housingType": {
+      "title": "8. 居住環境與交通方便性 - 住家型態",
+      "type": "string",
+      "enum": ["elevator", "apartment", "house", "villa"],
+      "x-labels": {
+        "elevator": "電梯大樓",
+        "apartment": "無電梯公寓",
+        "house": "平房",
+        "villa": "透天厝"
+      }
+    },
+    "accessibility": {
+      "title": "居住環境無障礙狀況",
+      "type": "object",
+      "properties": {
+        "overallBarrier": { 
+          "title": "你會不會因為家裡或外出環境不方便，而減少活動？", 
+          "type": "integer", 
+          "minimum": 0, 
+          "maximum": 5,
+          "x-scale": {
+            "0": "經常因此不敢活動",
+            "5": "完全不會，環境很友善"
+          }
+        },
+        "bathroom": { "title": "浴廁安全設施", "type": "boolean" },
+        "threshold": { "title": "全室無門檻", "type": "boolean" },
+        "aisle": { "title": "走道寬敞可迴轉", "type": "boolean" },
+        "bedside": { "title": "床邊安全扶手", "type": "boolean" },
+        "entrance": { "title": "出入口無障礙", "type": "boolean" },
+        "kitchen": { "title": "廚房無障礙", "type": "boolean" },
+        "bedroom": { "title": "臥室無障礙", "type": "boolean" },
+        "livingRoom": { "title": "客廳無障礙", "type": "boolean" },
+        "smartHome": { "title": "智慧家居設備", "type": "boolean" },
+        "outdoorRamp": { "title": "門口設有斜坡", "type": "boolean" },
+        "outdoorElevator": { "title": "社區具備電梯", "type": "boolean" },
+        "outdoorSidewalk": { "title": "周邊人行道平整", "type": "boolean" },
+        "outdoorLighting": { "title": "夜間照明充足", "type": "boolean" },
+        "exitDifficulty": { "title": "進出門口困難", "type": "boolean", "x-warning": true },
+        "streetDifficulty": { "title": "到街道不便", "type": "boolean", "x-warning": true },
+        "appointmentService": { "title": "具備預約接送服務", "type": "boolean" },
+        "iBusApp": { "title": "會用公車預約App", "type": "boolean" }
+      }
+    },
+    "transportation": {
+      "title": "交通出行評估",
+      "type": "object",
+      "properties": {
+        "mobilityAid": {
+          "title": "輔具使用狀況",
+          "type": "string",
+          "enum": ["none", "manual-wheelchair", "electric-wheelchair", "walker", "cane"],
+          "x-labels": {
+            "none": "無使用",
+            "manual-wheelchair": "手動輪椅",
+            "electric-wheelchair": "電動輪椅",
+            "walker": "助行器",
+            "cane": "拐杖"
+          }
+        },
+        "bus": { "title": "可搭乘公車", "type": "boolean" },
+        "mrt": { "title": "可搭乘捷運", "type": "boolean" },
+        "train": { "title": "可搭乘火車", "type": "boolean" },
+        "taxi": { "title": "可搭乘計程車", "type": "boolean" },
+        "score": { 
+          "title": "你會不會因為交通不方便，而減少出門？", 
+          "type": "integer", 
+          "minimum": 0, 
+          "maximum": 5,
+          "x-scale": {
+            "0": "經常因此不敢出門",
+            "5": "完全不會，交通很方便"
+          }
+        }
+      }
+    }
+  },
+  "required": ["respondentType", "currentStage", "primaryConcern", "physical", "selfCare", "cognition", "family", "social", "housingType", "accessibility", "transportation"]
+}
