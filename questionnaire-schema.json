@@ -7,9 +7,9 @@
     "standardScale": {
       "x-scale": {
         "0": "完全無法，需要完全依賴他人",
-        "1": "幾乎無法",
-        "2": "需要大量協助",
-        "3": "可以做，但會卡或需要一點幫忙",
+        "1": "幾乎無法，需要他人高度協助",
+        "2": "大多時候無法，只在特定情況不需協助",
+        "3": "可以做，但會卡住或需要一點幫忙",
         "4": "大致可自行完成",
         "5": "完全可以自己完成"
       }
@@ -17,7 +17,8 @@
   },
   "properties": {
     "respondentType": {
-      "title": "1. 您目前填寫的身份是？",
+      "title": "1. 填寫人：您與身障者的關係是什麼？",
+      "description": "若非本人填寫，請依照當事者意願或詢問當事者填答選項，其不能表達意思者例外",
       "type": "string",
       "enum": ["self", "family", "other"],
       "x-labels": {
@@ -27,7 +28,7 @@
       }
     },
     "currentStage": {
-      "title": "2. 目前大概在哪個階段？",
+      "title": "2. 目前受安置的情況是在哪個階段？",
       "type": "string",
       "enum": ["hospitalized", "just-discharged", "home-awhile", "stable", "planning-work"],
       "x-labels": {
@@ -39,7 +40,7 @@
       }
     },
     "primaryConcern": {
-      "title": "3. 您現在最想先解決什麼？",
+      "title": "3. 現階段最迫切要解決的問題是什麼？",
       "type": "string",
       "enum": ["care", "daily-life", "cognition", "work-economy", "family-pressure", "social-emotional", "housing-transport", "unknown"],
       "x-labels": {
@@ -113,7 +114,21 @@
           }
         },
         "number": { "title": "證明編號", "type": "string" },
-        "category": { "title": "障礙類別 (ICF)", "type": "string" }
+        "category": { 
+          "title": "障礙類別 (ICF)", 
+          "type": "string",
+          "enum": ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6", "cat7", "cat8"],
+          "x-labels": {
+            "cat1": "第一類：神經系統構造及精神、心智功能（如：智能障礙、失智症、自閉症、精神障礙等）",
+            "cat2": "第二類：眼、耳及相關構造與感官功能及疼痛（如：視覺、聽覺、平衡機能障礙）",
+            "cat3": "第三類：涉及聲音與言語構造及其功能（如：聲音機能或語言機能障礙）",
+            "cat4": "第四類：循環、造血、免疫與呼吸系統構造及其功能（如：心臟、造血、呼吸器官機能障礙）",
+            "cat5": "第五類：消化、新陳代謝與內分泌系統相關構造及其功能（如：吞嚥、胃、腸道機能障礙）",
+            "cat6": "第六類：泌尿與生殖系統相關構造及其功能（如：腎臟、排泄機能障礙）",
+            "cat7": "第七類：神經、肌肉、骨骼之運動系統相關構造及其功能（如：肢體障礙、頑性癲癇等）",
+            "cat8": "第八類：皮膚與相關構造及其功能（如：顏面損傷、特殊體質）"
+          }
+        }
       },
       "dependencies": {
         "hasCertificate": ["yes"]
@@ -134,14 +149,15 @@
       "type": "object",
       "x-scoring": "0-5 (分數越高越好)",
       "properties": {
-        "indoorMobility": { "title": "在家裡的移動情形", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
-        "outdoorMobility": { "title": "外出的移動情形", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
-        "transfer": { "title": "從床到椅子/馬桶的移位", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
-        "balance": { "title": "平衡穩定度 (是否容易跌倒)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
-        "endurance": { "title": "耐力 (走或站的持久度)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
-        "chronicControl": { "title": "如果沒有人幫忙，你能不能知道或管理自己的血壓、血糖等狀況？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "healthMonitoring": { "title": "健康監測：沒有人幫忙時，能否知道自己的體溫、脈搏、血氧、血壓、血糖等狀況？", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
         "pain": { "title": "疼痛控制穩定度 (0:極痛, 5:無痛)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
-        "rehabStatus": { "title": "復健或運動的規律性", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" }
+        "rehabStatus": { "title": "復健或運動的規律性", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "indoorMobility": { "title": "在家裡的移動情形 (如：從房間到浴室)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "transfer": { "title": "從床到椅子/輪椅/便盆椅的移位", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "transferToilet": { "title": "從床到馬桶的移位", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "outdoorMobility": { "title": "外出的移動情形 (是否依賴行動輔具)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "balance": { "title": "平衡穩定度 (是否容易跌倒)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "endurance": { "title": "活動耐力 (走或站的持久度)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" }
       }
     },
     "selfCare": {
@@ -151,10 +167,10 @@
       "properties": {
         "eating": { "title": "自行進食", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
         "bathing": { "title": "自行洗澡", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
-        "toileting": { "title": "自行上廁所", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "toileting": { "title": "自行如廁", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
         "dressing": { "title": "自行穿脫衣服", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
         "medication": { "title": "按時吃藥與藥物管理", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
-        "housework": { "title": "處理家事或準備餐點", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
+        "housework": { "title": "處理家事 (如：準備餐點、洗衣服)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" },
         "errands": { "title": "出門處理日常事務 (如：買東西、繳費)", "type": "integer", "minimum": 0, "maximum": 5, "$ref": "#/definitions/standardScale" }
       }
     },

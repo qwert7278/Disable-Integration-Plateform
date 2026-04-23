@@ -234,7 +234,7 @@ export function analyzeIntake(data: IntakeData): AnalysisReport {
   }
 
   // Assistive Device & Rehab Mapping
-  if (radarData[0].score <= 3 || data.physical.transfer <= 2 || data.physical.indoorMobility <= 2 || data.physical.outdoorMobility <= 2) {
+  if (radarData[0].score <= 3 || data.physical.transfer <= 2 || data.physical.transferToilet <= 2 || data.physical.indoorMobility <= 2 || data.physical.outdoorMobility <= 2) {
     prioritizedTasks.push({
       title: '專業輔具評估與復健規劃',
       agency: '各縣市輔具資源中心/復健科醫院',

@@ -42,14 +42,16 @@ export interface IntakeData {
   // A2. Six Dimensions (Sub-scores 0-5)
   // 1. Physical Function
   physical: {
+    healthMonitoring: number;
+    pain: number;
+    rehabStatus: number;
     indoorMobility: number;
-    outdoorMobility: number;
     transfer: number;
+    transferToilet: number;
+    outdoorMobility: number;
     balance: number;
     endurance: number;
     chronicControl: number;
-    pain: number;
-    rehabStatus: number;
   };
   // 2. Self-Care
   selfCare: {
